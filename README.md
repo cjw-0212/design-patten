@@ -4,8 +4,6 @@
 
 [Java设计模式—单例设计模式(Singleton Pattern)完全解析_java单例设计模式那个好用-CSDN博客](https://blog.csdn.net/dmk877/article/details/50311791)
 
-### 目的
-
 确保应用中只有一个对象存在，也就是保证一个类在内存中的对象唯一性。实现步骤如下：
 
 * 私有化构造方法
@@ -360,9 +358,87 @@ public class XiaoMiFactory  implements AbstractApplianceFactory{
 
 缺点：
 
-* 现在的工厂新增一种产品时，需要对抽象工厂进行修改，这样会设计所有子类的修改。
+* 现有的工厂新增一种产品时，需要对抽象工厂进行修改，这样会涉及所有子类的修改。
 
 适用场景：
 
 * 系统有多个产品族，每次使用其中一个产品族，可以用抽象工厂和配置文件实现动态更换
 
+## 建造者模式
+
+对于一些复杂的对象，由于创建的过程比较复杂，可以由一个创建者返回给客户端一个完整的对象，而客户端无需知道具体的创建细节。
+
+允许用户通过指定类型和内容来创建他们，不需要知道内部对象具体的创建细节。
+
+![image-20240606155346644](D:\MyNote\picture\image-20240606155346644.png)
+
+```java
+//食物类
+public class Meal {
+    private String food;
+    private String drink;
+}
+//抽象套餐构造者
+public abstract class MealBuilder {
+    //对于同一包内的类和其子类可见
+    protected Meal meal=new Meal();
+    public abstract void setDrink();
+    public abstract void setFood();
+    public Meal getMeal(){
+        return this.meal;
+    }
+}
+//套餐A构造者
+public class MealBuilderA extends MealBuilder{
+    @Override
+    public void setDrink() {
+        meal.setDrink("A套餐饮料");
+    }
+
+    @Override
+    public void setFood() {
+        meal.setFood("A套餐食物");
+    }
+}
+//套餐B构造者
+public class MealBuilderB extends MealBuilder{
+    @Override
+    public void setDrink() {
+        meal.setDrink("B套餐饮料");
+    }
+
+    @Override
+    public void setFood() {
+        meal.setFood("B套餐食物");
+    }
+}
+//指挥者类-服务员，只需要指定哪个套餐即可获取对象
+public class Waiter {
+    private MealBuilder mealBuilder;
+
+    public void setMealBuilder(MealBuilder mealBuilder) {
+        this.mealBuilder = mealBuilder;
+    }
+
+    public Meal construct() {
+        mealBuilder.setDrink();
+        mealBuilder.setFood();
+        return mealBuilder.getMeal();
+    }
+}
+
+public class BuilderTest {
+    @Test
+    public void test(){
+        Waiter waiter = new Waiter();
+        waiter.setMealBuilder(new MealBuilderA());
+        System.out.println(waiter.construct());
+        waiter.setMealBuilder(new MealBuilderB());
+        System.out.println(waiter.construct());
+    }
+}
+```
+
+缺点：
+
+* 如果产品之间的差异性很大，就不适合适用建造者模式
