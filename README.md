@@ -442,3 +442,109 @@ public class BuilderTest {
 缺点：
 
 * 如果产品之间的差异性很大，就不适合适用建造者模式
+
+## 原型模式
+
+有时候需要多次创建某一类型的对象，为了简化创建过程，可以只创建一个对象然后通过克隆的方式复制出多个相同的对象。
+
+### 浅克隆
+
+只克隆该对象的基本类型参数，对于引用类型参数还是指向原来的
+
+![image-20240607140550231](D:\MyNote\picture\image-20240607140550231.png)
+
+```java
+//附件l
+public class Attachment {
+}
+
+//邮件类
+public class Email implements Cloneable {
+    private Attachment attachment = null;
+
+    public Email(Attachment attachment) {
+        this.attachment = attachment;
+    }
+
+    public Attachment getAttachment() {
+        return this.attachment;
+    }
+
+    @Override
+    public Email clone() {
+        try {
+            return (Email) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+}
+
+
+public class ShallowTest {
+    @Test
+    public void test(){
+        Email email=new Email(new Attachment());
+        Email cloneEmail=email.clone();
+        System.out.println(email==cloneEmail);//false
+        System.out.println(email.getAttachment()==cloneEmail.getAttachment());//true
+    }
+}
+```
+
+### 深克隆
+
+基本类型参数和引用类型参数都克隆出一份新的
+
+![image-20240607140607577](D:\MyNote\picture\image-20240607140607577.png)
+
+在Java语言中，通过覆盖Object的clone方法可以实现浅克隆，通过序列化可以实现深克隆。序列化时将对象写到流中，是原对象的拷贝，此时原对象还存在内存中，通过序列化将其写入流再读出即可实现深克隆。被序列化的类要实现Serializable接口。
+
+```java
+public class Attachment implements Serializable {
+}
+
+public class Email implements Serializable {
+    private Attachment attachment = null;
+
+    public Email(Attachment attachment) {
+        this.attachment = attachment;
+    }
+
+    public Attachment getAttachment() {
+        return attachment;
+    }
+
+    public Email deepClone() {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+            objectOutputStream.writeObject(this);
+            ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            ObjectInputStream objectInputStream=new ObjectInputStream(byteArrayInputStream);
+            return (Email) objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+public class DeepTest {
+    @Test
+    public void test(){
+        Email email=new Email(new Attachment());
+        Email cloneEmail=email.deepClone();
+        System.out.println(email ==cloneEmail);//false
+        System.out.println(email.getAttachment() == cloneEmail.getAttachment());//false
+    }
+}
+
+/*也可以通过逐个克隆实现深克隆
+Attachment cloneAttachment = (Attachment) this.attachment.clone();
+Email cloneEmail = (Email) super.clone();
+cloneEmail.setAttachment(cloneAttachment);
+return cloneEmail;
+*/
+```
+
+当创建对象新实例较为复杂时，使用原型模式可以简化对象的创建过程。
