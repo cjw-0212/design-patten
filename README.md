@@ -192,9 +192,7 @@ public enum EnumSingleton {
 就跟项目中的工具类的作用那样，使用类+静态方法，比如StringUtils.isEmpty()。
 
 ### 简单工厂模式
-
-![image-20240604000947673](D:\MyNote\picture\image-20240604000947673.png)
-
+![](image/简单工厂.png)
 工厂类的工厂方法根据传入的参数决定创建哪一类对象并返回，被创建的实例通常都有共同的父类。
 
 ```java
@@ -255,7 +253,7 @@ public class SimpleFactoryTest {
 
 工厂父类负责定义对外的接口，而工厂子类复杂创建具体的对象。
 
-![image-20240604003735623](D:\MyNote\picture\image-20240604003735623.png)
+![](image/工厂方法.png)
 
 ```java
 public interface TelevisionFactory {
@@ -300,7 +298,7 @@ public class FactoryMethodTest {
 
 相比简单工厂模式一个工厂只能创建一种产品，抽象工厂中每一个具体工厂可以创建多个具体产品
 
-![image-20240604145559766](D:\MyNote\picture\image-20240604145559766.png)
+![](image/抽象工厂.png)
 
 ```java
 public abstract class AirConditioner {
@@ -370,7 +368,7 @@ public class XiaoMiFactory  implements AbstractApplianceFactory{
 
 允许用户通过指定类型和内容来创建他们，不需要知道内部对象具体的创建细节。
 
-![image-20240606155346644](D:\MyNote\picture\image-20240606155346644.png)
+![](image/建造者.png)
 
 ```java
 //食物类
@@ -451,10 +449,10 @@ public class BuilderTest {
 
 只克隆该对象的基本类型参数，对于引用类型参数还是指向原来的
 
-![image-20240607140550231](D:\MyNote\picture\image-20240607140550231.png)
+![](image/浅克隆.png)
 
 ```java
-//附件l
+//附件类
 public class Attachment {
 }
 
@@ -496,7 +494,7 @@ public class ShallowTest {
 
 基本类型参数和引用类型参数都克隆出一份新的
 
-![image-20240607140607577](D:\MyNote\picture\image-20240607140607577.png)
+![](image/深克隆.png)
 
 在Java语言中，通过覆盖Object的clone方法可以实现浅克隆，通过序列化可以实现深克隆。序列化时将对象写到流中，是原对象的拷贝，此时原对象还存在内存中，通过序列化将其写入流再读出即可实现深克隆。被序列化的类要实现Serializable接口。
 
